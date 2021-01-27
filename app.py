@@ -7,7 +7,7 @@ app = Flask(__name__)
 print(str(datetime.now()).split(' '))
 
 
-@app.route('/')
+@app.route('/datetimeapi')
 def home():
     date = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%Y-%m-%d')
     time = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%H:%M:%S')
