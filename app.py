@@ -4,9 +4,6 @@ from pytz import timezone
 
 app = Flask(__name__)
 
-print(str(datetime.now()).split(' '))
-
-
 @app.route('/datetimeapi')
 def home():
     date = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%Y-%m-%d')
