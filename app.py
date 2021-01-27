@@ -8,9 +8,8 @@ print(str(datetime.now()).split(' '))
 
 @app.route('/')
 def home():
-    date_time = str(datetime.now()).split(' ')
-    date = date_time[0]
-    time = date_time[1].split('.')[0]
+    date = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%Y-%m-%d')
+    time = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%H:%M:%S')
     return jsonify({"status": True, "date": date, "time": time})
 
 
