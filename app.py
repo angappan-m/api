@@ -3,12 +3,6 @@ from datetime import datetime
 from pytz import timezone
 from flask_pymongo import PyMongo
 
-# cluster = MongoClient("mongodb+srv://pharmaceuticalsdb:Pharmaceuticals123@pharmaceuticalscluster0.o91q1.mongodb.net/pharmaceuticalsDb?retryWrites=true&w=majority")
-# db = cluster['pharmaceuticalsDb']
-# collection = db['perDayDataLogs']
-# data = list(collection.find())
-#
-# print(data)
 
 app = Flask(__name__)
 
@@ -31,20 +25,20 @@ def datetime():
 @app.route('/perdaydatalogs',methods=['GET','POST'])
 def perdaydatalogs():
     if request.method == 'GET':
-        device_id = int(request.args['device_id'])
         product_id = int(request.args['product_id'])
         perdaydatas = mongo.db.perDayDataLogs
         output = []
-        for x in perdaydatas.find({"iot_id": device_id}):
-            product_ids = x['product_ids']
-            i = 0
-            for y in product_ids:
-                if y == product_id:
-                    output.append({'product_id': product_id,'product_name': x['product_names'][i],'date': x['date'],'iot_id':x['iot_id'],'loc': x['loc_latlon'],'loc_deg': x['loc_latlondeg'],'act_temp_c': x['act_temp_c'],'light' : x['light'],'hum' : x['humidity'],'req_temp' : x['req_temp']})
-                else:
-                    i = i + 1
-
-        return jsonify({'status':True,'message':'success','data': output})
+        for x in perdaydatas.find():
+            if product_id in x['product_ids']:
+                device_id = x['iot_id']
+                date = x['date']
+                act_temp = x['act_temp_c']
+                req_temp = x['req_temp']
+                for i,pid in enumerate(x['product_ids']):
+                    if pid == product_id:
+                        pname = x['product_names'][i]
+                return jsonify({'status':True,'message':'success','data': [{"iot_id": device_id,"product_id": product_id,"product_name": pname,"date":date,"act_temp_c":act_temp,"req_temp":req_temp}]})
+        return jsonify({'status':False,'message':'failed','data': []})
 
 if __name__ == '__main__':
     app.run(debug=True)
