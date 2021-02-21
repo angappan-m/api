@@ -40,5 +40,14 @@ def perdaydatalogs():
                 return jsonify({'status':True,'message':'success','data': [{"iot_id": device_id,"product_id": product_id,"product_name": pname,"date":date,"act_temp_c":act_temp,"req_temp":req_temp}]})
         return jsonify({'status':False,'message':'failed','data': []})
 
+@app.route('/werehouseusers',methods=['GET','POST'])
+def werehouseusers():
+    if request.method == 'GET':
+        wereHouseUsers = mongo.db.wereHouseUsers
+        output = []
+        for x in wereHouseUsers.find():
+            output.append({"username":x['username'],"password":x['password']})
+        return jsonify({'status':False,'message':'failed','data': output})
+
 if __name__ == '__main__':
     app.run(debug=True)
