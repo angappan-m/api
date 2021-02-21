@@ -17,7 +17,7 @@ def home():
 
 
 @app.route('/datetimeapi',methods=['GET','POST'])
-def datetime():
+def datetimeapi():
     date = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%Y-%m-%d')
     time = datetime.now().astimezone(timezone('Asia/Calcutta')).strftime('%H:%M:%S')
     return jsonify({"status": True, "date": date, "time": time})
@@ -43,11 +43,16 @@ def perdaydatalogs():
 @app.route('/werehouseusers',methods=['GET','POST'])
 def werehouseusers():
     if request.method == 'GET':
+        username = request.args['uname']
+        password = request.args['pass']
         wereHouseUsers = mongo.db.wereHouseUsers
-        output = []
         for x in wereHouseUsers.find():
-            output.append({"username":x['username'],"password":x['password']})
-        return jsonify({'status':False,'message':'failed','data': output})
+            if x['username'] == str(username) and x['password'] == str(password):
+                return jsonify({'status':True,'message':'success'})
+            # output.append({"username":x['username'],"password":x['password']})
+            else:
+                return jsonify({'status':False,'message':'failed'})
+        
 
 if __name__ == '__main__':
     app.run(debug=True)
