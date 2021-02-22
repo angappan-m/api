@@ -59,8 +59,15 @@ def werehouseassignment():
     iotid = request.args['iotid']
     arr_pids = pids.split(',')
     iotAssignment = mongo.db.iotAssignment
+
     try:
-        iotAssignment.insert_one({"iot_id":iotid,"product_ids": arr_pids})
+        if iotAssignment.find({"iot_id": iotid}).count() > 0:
+            #update
+            query = {"iot_id": iotid}
+            iotAssignment.update(query,{"$set" : {"product_ids": arr_pids}})
+        else:
+            #insert
+            iotAssignment.insert_one({"iot_id":iotid,"product_ids": arr_pids})
         return jsonify({'status':True,'message':'success'})
     except:
         return jsonify({'status':False,'message':'failed'})
