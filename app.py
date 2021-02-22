@@ -53,6 +53,18 @@ def werehouseusers():
             else:
                 return jsonify({'status':False,'message':'failed'})
         
+@app.route('/werehouseassignment',methods=['GET','POST'])
+def werehouseassignment():
+    pids = str(request.args['pids'])
+    iotid = request.args['iotid']
+    arr_pids = pids.split(',')
+    iotAssignment = mongo.db.iotAssignment
+    try:
+        iotAssignment.insert_one({"iot_id":iotid,"product_ids": arr_pids})
+        return jsonify({'status':True,'message':'success'})
+    except:
+        return jsonify({'status':False,'message':'failed'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
