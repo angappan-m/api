@@ -28,17 +28,20 @@ def perdaydatalogs():
         product_id = int(request.args['product_id'])
         perdaydatas = mongo.db.perDayDataLogs
         output = []
+        product_name = ""
         for x in perdaydatas.find():
+            for i,p in enumerate(x['product_ids']):
+                if p == product_id:
+                    product_name = x['product_names'][i]
             if product_id in x['product_ids']:
-                device_id = x['iot_id']
+                act_temp_c = x['act_temp_c']
                 date = x['date']
-                act_temp = x['act_temp_c']
+                iotid = x['iot_id']
+                pid = product_id
+                pname = product_name
                 req_temp = x['req_temp']
-                for i,pid in enumerate(x['product_ids']):
-                    if pid == product_id:
-                        pname = x['product_names'][i]
-                return jsonify({'status':True,'message':'success','data': [{"iot_id": device_id,"product_id": product_id,"product_name": pname,"date":date,"act_temp_c":act_temp,"req_temp":req_temp}]})
-        return jsonify({'status':False,'message':'failed','data': []})
+                output.append({"act_temp_c":act_temp_c,"date":date,"iotid":iotid,"product_id":pid,"product_name":pname,"req_temp":req_temp})
+        return jsonify({'status':False,'message':'failed','data': output})
 
 @app.route('/werehouseusers',methods=['GET','POST'])
 def werehouseusers():
